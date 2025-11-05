@@ -1,0 +1,49 @@
+-- Create Database
+CREATE DATABASE IF NOT EXISTS rfid_library_db;
+USE rfid_library_db;
+
+-- Table: users
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'librarian', 'student') NOT NULL,
+    rfid_tag VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(255) DEFAULT NULL,
+    gender ENUM('male', 'female') DEFAULT NULL
+);
+
+-- Table: transactions
+CREATE TABLE IF NOT EXISTS transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_rfid VARCHAR(50) NOT NULL,
+    book_title VARCHAR(255) NOT NULL,
+    borrow_date DATETIME NOT NULL,
+    return_due DATETIME NOT NULL,
+    return_date DATETIME DEFAULT NULL,
+    status ENUM('Borrowed', 'Returned') NOT NULL DEFAULT 'Borrowed',
+    penalty DECIMAL(10,2) DEFAULT 0.00
+);
+
+-- Table: penalties
+CREATE TABLE IF NOT EXISTS penalties (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_rfid VARCHAR(50) NOT NULL,
+    days_late INT NOT NULL,
+    penalty_amount DECIMAL(10,2) NOT NULL,
+    book_title VARCHAR(255) NOT NULL,
+    date_recorded DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert Default Users
+INSERT INTO users (username, password, role, rfid_tag, name, gender) VALUES
+('admin', 'admin123', 'admin', '3235673260', NULL, NULL),
+('librarian1', 'lib123', 'librarian', '1122334455', NULL, NULL),
+('juancruz', 'student123', 'student', '9988776655', NULL, NULL);
+
+-- Optional: Foreign Key (Uncomment if using constraint)
+-- ALTER TABLE transactions 
+--    ADD FOREIGN KEY (student_rfid) REFERENCES users(rfid_tag)
+--    ON DELETE CASCADE;
+
+-- All set up!
