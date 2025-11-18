@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <h2>Library System Login</h2>
+            <form id="loginForm">
+                <input type="text" id="rfidInput" placeholder="Scan or enter RFID">
+                <input type="password" id="passwordInput" placeholder="Enter password">
+                <button type="submit" class="btn-main">Login</button>
+            </form>
+            <div class="demo-accounts">
+                <h3>Demo Accounts:</h3>
+                <p><strong>Admin:</strong> RFID: 3235673260, Password: admin123</p>
+                <p><strong>Librarian:</strong> RFID: 1122334455, Password: lib123</p>
+                <p><strong>Student:</strong> RFID: 9988776655, Password: student123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="screen">
+        <header>
+            <div class="header-content">
+                <h1>Welcome, Admin</h1>
+                <button id="adminLogout" class="btn-back">Logout</button>
+            </div>
+        </header>
+        <div class="container">
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Manage Librarians</h3>
+                    <button id="addLibrarianBtn" class="btn-main">Add Librarian</button>
+                    <button id="resetPasswordBtn" class="btn-main">Reset Password</button>
+                </div>
+                <div class="card">
+                    <h3>View Data</h3>
+                    <button id="viewTransactionsBtn" class="btn-main">View Transactions</button>
+                    <button id="viewLogsBtn" class="btn-main">View Logs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Librarian Dashboard -->
+    <div id="librarianDashboard" class="screen">
+        <header>
+            <div class="header-content">
+                <h1>Welcome, Librarian</h1>
+                <button id="librarianLogout" class="btn-back">Logout</button>
+            </div>
+        </header>
+        <div class="container">
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Student Management</h3>
+                    <button id="addStudentBtn" class="btn-main">Add Student</button>
+                </div>
+                <div class="card">
+                    <h3>Book Transactions</h3>
+                    <button id="borrowBookBtn" class="btn-main">Borrow Book</button>
+                    <button id="returnBookBtn" class="btn-main">Return Book</button>
+                </div>
+                <div class="card">
+                    <h3>Account</h3>
+                    <button id="changePasswordBtn" class="btn-main">Change Password</button>
+                </div>
+                <div class="card">
+                    <h3>View Data</h3>
+                    <button id="viewLibrarianTransactionsBtn" class="btn-main">View Transactions</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Dashboard -->
+    <div id="studentDashboard" class="screen">
+        <header>
+            <div class="header-content">
+                <h1>Welcome, Student</h1>
+                <button id="studentLogout" class="btn-back">Logout</button>
+            </div>
+        </header>
+        <div class="container">
+            <div class="card">
+                <h3>Your Borrow History</h3>
+                <div id="studentTransactions" class="data-table">
+                    <!-- Transactions will be populated here -->
+                </div>
+            </div>
+            <div class="card">
+                <h3>Pending Penalties</h3>
+                <div id="studentPenalties" class="data-table">
+                    <!-- Penalties will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Librarian Form -->
+    <div id="addLibrarianScreen" class="screen">
+        <div class="form-container">
+            <div class="form-wrapper">
+                <h2>Add New Librarian</h2>
+                <div class="title-underline"></div>
+                <form id="addLibrarianForm">
+                    <div class="form-group">
+                        <label for="employeeId">Employee ID:</label>
+                        <input type="text" id="employeeId" name="employeeId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="librarianName">Full Name:</label>
+                        <input type="text" id="librarianName" name="librarianName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="librarianGender">Gender:</label>
+                        <select id="librarianGender" name="librarianGender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="librarianRfid">RFID Tag:</label>
+                        <input type="text" id="librarianRfid" name="librarianRfid" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Add Librarian</button>
+                        <button type="button" id="backFromAddLibrarian" class="btn btn-back">Back</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Student Form -->
+    <div id="addStudentScreen" class="screen">
+        <div class="form-container">
+            <div class="form-wrapper">
+                <h2>Add New Student</h2>
+                <div class="title-underline"></div>
+                <form id="addStudentForm">
+                    <div class="form-group">
+                        <label for="studentName">Full Name:</label>
+                        <input type="text" id="studentName" name="studentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentId">Student ID:</label>
+                        <input type="text" id="studentId" name="studentId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentGender">Gender:</label>
+                        <select id="studentGender" name="studentGender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentRfid">RFID Tag:</label>
+                        <input type="text" id="studentRfid" name="studentRfid" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Add Student</button>
+                        <button type="button" id="backFromAddStudent" class="btn btn-back">Back</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Borrow Book Form -->
+    <div id="borrowBookScreen" class="screen">
+        <div class="form-container">
+            <div class="form-wrapper">
+                <h2>Borrow Book</h2>
+                <div class="title-underline"></div>
+                <form id="borrowBookForm">
+                    <div class="form-group">
+                        <label for="borrowRfid">Student RFID:</label>
+                        <input type="text" id="borrowRfid" name="borrowRfid" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="borrowBookTitle">Book Title:</label>
+                        <input type="text" id="borrowBookTitle" name="borrowBookTitle" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Borrow Book</button>
+                        <button type="button" id="backFromBorrow" class="btn btn-back">Back</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Return Book Form -->
+    <div id="returnBookScreen" class="screen">
+        <div class="form-container">
+            <div class="form-wrapper">
+                <h2>Return Book</h2>
+                <div class="title-underline"></div>
+                <form id="returnBookForm">
+                    <div class="form-group">
+                        <label for="returnRfid">Student RFID:</label>
+                        <input type="text" id="returnRfid" name="returnRfid" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="returnBookTitle">Book Title:</label>
+                        <input type="text" id="returnBookTitle" name="returnBookTitle" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Return Book</button>
+                        <button type="button" id="backFromReturn" class="btn btn-back">Back</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Form -->
+    <div id="changePasswordScreen" class="screen">
+        <div class="form-container">
+            <div class="form-wrapper">
+                <h2>Change Password</h2>
+                <div class="title-underline"></div>
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="newPassword">New Password:</label>
+                        <input type="password" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Update Password</button>
+                        <button type="button" id="backFromChangePassword" class="btn btn-back">Back</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Transactions Screen -->
+    <div id="viewTransactionsScreen" class="screen">
+        <div class="container">
+            <div class="header-with-back">
+                <h2>Transaction Records</h2>
+                <button id="backFromTransactions" class="btn-back">Back</button>
+            </div>
+            <div class="card">
+                <div id="transactionsTable" class="data-table">
+                    <!-- Transactions will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Logs Screen -->
+    <div id="viewLogsScreen" class="screen">
+        <div class="container">
+            <div class="header-with-back">
+                <h2>Transaction Logs</h2>
+                <button id="backFromLogs" class="btn-back">Back</button>
+            </div>
+            <div class="card">
+                <div id="logsTable" class="data-table">
+                    <!-- Logs will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div id="resetPasswordModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">Reset Librarian Password</div>
+            <div class="modal-body">
+                <form id="resetPasswordForm">
+                    <div class="form-group">
+                        <label for="librarianSelect">Select Librarian:</label>
+                        <select id="librarianSelect" name="librarianSelect" required>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="note">Password will be reset to: <strong>lib123</strong></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelReset" class="btn btn-back">Cancel</button>
+                <button id="confirmReset" class="btn btn-primary">Reset Password</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">Success</div>
+            <div class="modal-body">
+                <div class="success-line">
+                    <div>✅</div>
+                    <div>
+                        <div id="successMessage"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="successOk" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">Error</div>
+            <div class="modal-body">
+                <div class="error-line">
+                    <div>⚠️</div>
+                    <div>
+                        <div id="errorMessage"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="errorOk" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
