@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "admin123",
+      "role": "admin",
+      "rfid_tag": "3235673260",
+      "name": "System Administrator",
+      "gender": "male",
+      "active": true
+    },
+    {
+      "id": 2,
+      "username": "librarian1",
+      "password": "lib123",
+      "role": "librarian",
+      "rfid_tag": "1122334455",
+      "name": "Jane Librarian",
+      "gender": "female",
+      "active": true
+    },
+    {
+      "id": 3,
+      "username": "juancruz",
+      "password": "student123",
+      "role": "student",
+      "rfid_tag": "9988776655",
+      "name": "Juan Cruz",
+      "gender": "male",
+      "active": true
+    }
+  ],
+  "transactions": [],
+  "penalties": []
+}

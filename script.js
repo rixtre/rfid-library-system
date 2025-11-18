@@ -14,6 +14,7 @@ const screens = {
     student: document.getElementById('studentDashboard'),
     addLibrarian: document.getElementById('addLibrarianScreen'),
     addStudent: document.getElementById('addStudentScreen'),
+    manageUsers: document.getElementById('manageUsersScreen'),
     borrowBook: document.getElementById('borrowBookScreen'),
     returnBook: document.getElementById('returnBookScreen'),
     changePassword: document.getElementById('changePasswordScreen'),
@@ -23,9 +24,13 @@ const screens = {
 
 const modals = {
     resetPassword: document.getElementById('resetPasswordModal'),
+    deleteUser: document.getElementById('deleteUserModal'),
     success: document.getElementById('successModal'),
     error: document.getElementById('errorModal')
 };
+
+// User to be deleted (temporary storage)
+let userToDelete = null;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -62,7 +67,8 @@ function initializeDefaultData() {
                 role: 'admin',
                 rfid_tag: '3235673260',
                 name: 'System Administrator',
-                gender: 'male'
+                gender: 'male',
+                active: true
             },
             {
                 id: 2,
@@ -71,7 +77,8 @@ function initializeDefaultData() {
                 role: 'librarian',
                 rfid_tag: '1122334455',
                 name: 'Jane Librarian',
-                gender: 'female'
+                gender: 'female',
+                active: true
             },
             {
                 id: 3,
@@ -80,7 +87,8 @@ function initializeDefaultData() {
                 role: 'student',
                 rfid_tag: '9988776655',
                 name: 'Juan Cruz',
-                gender: 'male'
+                gender: 'male',
+                active: true
             }
         ],
         transactions: [],
@@ -102,6 +110,10 @@ function setupEventListeners() {
     // Admin dashboard buttons
     document.getElementById('addLibrarianBtn').addEventListener('click', () => showScreen('addLibrarian'));
     document.getElementById('resetPasswordBtn').addEventListener('click', showResetPasswordModal);
+    document.getElementById('manageUsersBtn').addEventListener('click', () => {
+        loadUsersTable();
+        showScreen('manageUsers');
+    });
     document.getElementById('viewTransactionsBtn').addEventListener('click', () => {
         loadTransactionsTable();
         showScreen('viewTransactions');
@@ -124,6 +136,7 @@ function setupEventListeners() {
     // Back buttons
     document.getElementById('backFromAddLibrarian').addEventListener('click', () => showScreen('admin'));
     document.getElementById('backFromAddStudent').addEventListener('click', () => showScreen('librarian'));
+    document.getElementById('backFromManageUsers').addEventListener('click', () => showScreen('admin'));
     document.getElementById('backFromBorrow').addEventListener('click', () => showScreen('librarian'));
     document.getElementById('backFromReturn').addEventListener('click', () => showScreen('librarian'));
     document.getElementById('backFromChangePassword').addEventListener('click', () => showScreen('librarian'));
@@ -140,9 +153,15 @@ function setupEventListeners() {
     document.getElementById('returnBookForm').addEventListener('submit', handleReturnBook);
     document.getElementById('changePasswordForm').addEventListener('submit', handleChangePassword);
     
+    // Filter and search
+    document.getElementById('roleFilter').addEventListener('change', loadUsersTable);
+    document.getElementById('userSearch').addEventListener('input', loadUsersTable);
+    
     // Modal buttons
     document.getElementById('cancelReset').addEventListener('click', () => hideModal('resetPassword'));
     document.getElementById('confirmReset').addEventListener('click', handleResetPassword);
+    document.getElementById('cancelDelete').addEventListener('click', () => hideModal('deleteUser'));
+    document.getElementById('confirmDelete').addEventListener('click', handleDeleteUser);
     document.getElementById('successOk').addEventListener('click', () => hideModal('success'));
     document.getElementById('errorOk').addEventListener('click', () => hideModal('error'));
 }
@@ -202,8 +221,8 @@ function handleLogin(e) {
     
     // Find user by RFID or password
     const user = appData.users.find(u => 
-        (rfid && u.rfid_tag === rfid) || 
-        (password && u.password === password)
+        u.active && ((rfid && u.rfid_tag === rfid) || 
+        (password && u.password === password))
     );
     
     if (user) {
@@ -248,7 +267,7 @@ function handleAddLibrarian(e) {
     
     // Check for duplicates
     const duplicate = appData.users.find(u => 
-        u.username === employeeId || u.rfid_tag === rfid
+        u.active && (u.username === employeeId || u.rfid_tag === rfid)
     );
     
     if (duplicate) {
@@ -264,7 +283,8 @@ function handleAddLibrarian(e) {
         role: 'librarian',
         rfid_tag: rfid,
         name: name,
-        gender: gender
+        gender: gender,
+        active: true
     };
     
     appData.users.push(newLibrarian);
@@ -286,7 +306,7 @@ function handleAddStudent(e) {
     
     // Check for duplicates
     const duplicate = appData.users.find(u => 
-        u.username === studentId || u.rfid_tag === rfid
+        u.active && (u.username === studentId || u.rfid_tag === rfid)
     );
     
     if (duplicate) {
@@ -302,7 +322,8 @@ function handleAddStudent(e) {
         role: 'student',
         rfid_tag: rfid,
         name: name,
-        gender: gender
+        gender: gender,
+        active: true
     };
     
     appData.users.push(newStudent);
@@ -313,6 +334,125 @@ function handleAddStudent(e) {
     showScreen('librarian');
 }
 
+// Load users table for management
+function loadUsersTable() {
+    const container = document.getElementById('usersTable');
+    const roleFilter = document.getElementById('roleFilter').value;
+    const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+    
+    // Filter users
+    let filteredUsers = appData.users.filter(user => user.active);
+    
+    if (roleFilter !== 'all') {
+        filteredUsers = filteredUsers.filter(user => user.role === roleFilter);
+    }
+    
+    if (searchTerm) {
+        filteredUsers = filteredUsers.filter(user => 
+            user.name.toLowerCase().includes(searchTerm) ||
+            user.username.toLowerCase().includes(searchTerm) ||
+            user.rfid_tag.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    if (filteredUsers.length > 0) {
+        let html = `
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Username/ID</th>
+                    <th>Role</th>
+                    <th>RFID</th>
+                    <th>Gender</th>
+                    <th>Actions</th>
+                </tr>
+        `;
+        
+        filteredUsers.forEach(user => {
+            const isCurrentUser = currentUser && user.id === currentUser.id;
+            const adminCount = appData.users.filter(u => u.role === 'admin' && u.active).length;
+            const isLastAdmin = user.role === 'admin' && adminCount === 1;
+            
+            html += `
+                <tr>
+                    <td>${user.name || 'N/A'}</td>
+                    <td>${user.username}</td>
+                    <td>
+                        <span class="status-badge ${user.active ? 'status-active' : 'status-inactive'}">
+                            ${user.role}
+                        </span>
+                    </td>
+                    <td>${user.rfid_tag}</td>
+                    <td>${user.gender || 'N/A'}</td>
+                    <td class="action-buttons">
+                        ${!isCurrentUser && !isLastAdmin ? 
+                            `<button class="btn btn-danger" onclick="confirmDeleteUser(${user.id})">Delete</button>` : 
+                            `<button class="btn btn-back" disabled>Cannot Delete</button>`
+                        }
+                    </td>
+                </tr>
+            `;
+        });
+        
+        html += '</table>';
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = '<p>No users found matching your criteria.</p>';
+    }
+}
+
+// Confirm user deletion
+function confirmDeleteUser(userId) {
+    userToDelete = appData.users.find(user => user.id === userId);
+    
+    if (!userToDelete) {
+        showError('User not found');
+        return;
+    }
+    
+    // Check if user has active transactions
+    const activeTransactions = appData.transactions.filter(
+        t => t.student_rfid === userToDelete.rfid_tag && t.status === 'Borrowed'
+    );
+    
+    let warningMessage = `Are you sure you want to delete user "${userToDelete.name}"?`;
+    
+    if (activeTransactions.length > 0) {
+        warningMessage += `<br><br><strong>Warning:</strong> This user has ${activeTransactions.length} active book transaction(s).`;
+    }
+    
+    // Populate modal
+    document.getElementById('deleteUserMessage').innerHTML = warningMessage;
+    
+    document.getElementById('deleteUserDetails').innerHTML = `
+        <p><strong>Username:</strong> ${userToDelete.username}</p>
+        <p><strong>Role:</strong> ${userToDelete.role}</p>
+        <p><strong>RFID:</strong> ${userToDelete.rfid_tag}</p>
+    `;
+    
+    showModal('deleteUser');
+}
+
+// Handle user deletion
+function handleDeleteUser() {
+    if (!userToDelete) return;
+    
+    // Soft delete - mark as inactive
+    const userIndex = appData.users.findIndex(user => user.id === userToDelete.id);
+    if (userIndex !== -1) {
+        appData.users[userIndex].active = false;
+        saveData();
+        
+        showSuccess(`User "${userToDelete.name}" has been deleted successfully.`);
+        hideModal('deleteUser');
+        
+        // Reload the users table
+        loadUsersTable();
+    }
+    
+    userToDelete = null;
+}
+
 // Handle borrow book
 function handleBorrowBook(e) {
     e.preventDefault();
@@ -320,13 +460,13 @@ function handleBorrowBook(e) {
     const studentRfid = document.getElementById('borrowRfid').value;
     const bookTitle = document.getElementById('borrowBookTitle').value;
     
-    // Check if student exists
+    // Check if student exists and is active
     const student = appData.users.find(u => 
-        u.rfid_tag === studentRfid && u.role === 'student'
+        u.active && u.rfid_tag === studentRfid && u.role === 'student'
     );
     
     if (!student) {
-        showError('Student with this RFID not found');
+        showError('Active student with this RFID not found');
         return;
     }
     
@@ -437,7 +577,7 @@ function loadLibrarianSelect() {
     const select = document.getElementById('librarianSelect');
     select.innerHTML = '<option value="">-- select librarian --</option>';
     
-    const librarians = appData.users.filter(u => u.role === 'librarian');
+    const librarians = appData.users.filter(u => u.role === 'librarian' && u.active);
     librarians.forEach(lib => {
         const option = document.createElement('option');
         option.value = lib.username;
@@ -457,7 +597,7 @@ function handleResetPassword() {
     
     // Reset password to default
     const userIndex = appData.users.findIndex(u => 
-        u.username === librarianUsername && u.role === 'librarian'
+        u.active && u.username === librarianUsername && u.role === 'librarian'
     );
     
     if (userIndex !== -1) {

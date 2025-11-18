@@ -5,6 +5,8 @@
     --card: #fff;
     --muted: #666;
     --dark-red: #8B0000;
+    --danger: #dc3545;
+    --warning: #ffc107;
 }
 
 * {
@@ -160,6 +162,24 @@ header {
     transform: translateY(-2px);
 }
 
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.btn-warning {
+    background: var(--warning);
+    color: #212529;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+}
+
 /* Form Styles */
 .form-container {
     min-height: 100vh;
@@ -276,6 +296,31 @@ header {
     color: var(--dark-red);
 }
 
+/* Filters */
+.filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filters label {
+    font-weight: bold;
+    color: var(--dark-red);
+}
+
+.filters select, .filters input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.filters input {
+    flex: 1;
+    min-width: 200px;
+}
+
 /* Modal Styles */
 .modal-overlay {
     position: fixed;
@@ -343,6 +388,62 @@ header {
     border-radius: 6px;
 }
 
+.warning-line {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: #fff3cd;
+    padding: 12px;
+    border-left: 6px solid var(--warning);
+    border-radius: 6px;
+    color: #856404;
+}
+
+.user-details {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid var(--pcc-orange);
+}
+
+.user-details p {
+    margin: 5px 0;
+}
+
+.user-details strong {
+    color: var(--dark-red);
+}
+
+/* Action buttons in tables */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.action-buttons .btn {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* Status badges */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .header-content {
@@ -362,5 +463,18 @@ header {
         flex-direction: column;
         gap: 10px;
         align-items: flex-start;
+    }
+    
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filters input {
+        min-width: auto;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
     }
 }

@@ -41,6 +41,10 @@
                     <button id="resetPasswordBtn" class="btn-main">Reset Password</button>
                 </div>
                 <div class="card">
+                    <h3>User Management</h3>
+                    <button id="manageUsersBtn" class="btn-main">Manage All Users</button>
+                </div>
+                <div class="card">
                     <h3>View Data</h3>
                     <button id="viewTransactionsBtn" class="btn-main">View Transactions</button>
                     <button id="viewLogsBtn" class="btn-main">View Logs</button>
@@ -176,6 +180,33 @@
         </div>
     </div>
 
+    <!-- Manage Users Screen -->
+    <div id="manageUsersScreen" class="screen">
+        <div class="container">
+            <div class="header-with-back">
+                <h2>Manage Users</h2>
+                <button id="backFromManageUsers" class="btn-back">Back</button>
+            </div>
+            
+            <div class="filters">
+                <label for="roleFilter">Filter by Role:</label>
+                <select id="roleFilter">
+                    <option value="all">All Users</option>
+                    <option value="admin">Admins</option>
+                    <option value="librarian">Librarians</option>
+                    <option value="student">Students</option>
+                </select>
+                <input type="text" id="userSearch" placeholder="Search users...">
+            </div>
+
+            <div class="card">
+                <div id="usersTable" class="data-table">
+                    <!-- Users will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Borrow Book Form -->
     <div id="borrowBookScreen" class="screen">
         <div class="form-container">
@@ -292,6 +323,25 @@
             <div class="modal-footer">
                 <button id="cancelReset" class="btn btn-back">Cancel</button>
                 <button id="confirmReset" class="btn btn-primary">Reset Password</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete User Modal -->
+    <div id="deleteUserModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">Delete User</div>
+            <div class="modal-body">
+                <div id="deleteUserMessage" class="warning-line">
+                    <!-- Warning message will be populated here -->
+                </div>
+                <div class="user-details" id="deleteUserDetails">
+                    <!-- User details will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelDelete" class="btn btn-back">Cancel</button>
+                <button id="confirmDelete" class="btn btn-danger">Delete User</button>
             </div>
         </div>
     </div>
